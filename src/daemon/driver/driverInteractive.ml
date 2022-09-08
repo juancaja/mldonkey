@@ -1645,14 +1645,15 @@ let print_results stime buf o results =
                   if use_html_mods o then Buffer.add_string buf "\\<td class=\\\"sr\\\"\\>";
 
                   List.iter (fun t ->
-                      Buffer.add_string buf (Printf.sprintf "%-3s "
-                          (if t.tag_name = Field_Availability then "" else
-                          match t.tag_value with
-                            String s -> s
-                          | Uint64 i -> Int64.to_string i
-                          | Fint64 i -> Int64.to_string i
-                          | _ -> ""
-                        ))
+                    Buffer.add_string buf (Printf.sprintf "%-3s "
+                      (if t.tag_name = Field_Availability then "" else
+                        match t.tag_value with
+                          String s -> s
+                        | Uint64 i -> Int64.to_string i
+                        | Fint64 i -> Int64.to_string i
+                        | Uint8 i -> string_of_int i
+                        | _ -> "X"
+                      ))
                   ) r.result_tags;
                   Buffer.contents buf);
 
@@ -1686,14 +1687,14 @@ let print_results stime buf o results =
 
   else
 
-    print_table buf [| Align_Left; Align_Right; Align_Right; Align_Right; Align_Left; Align_Left; Align_Left|]
+    print_table buf [| Align_Left; Align_Right; Align_Right; Align_Right; Align_Right; Align_Left; Align_Left; Align_Left|]
       [|
       "[ Num ]";
       "Size";
       "Avail";
-      "Status";
+      "Stat"; (*Status*)
       "Names";
-      "Tags";
+      "Comp";
       "MD4";
     |]
 
