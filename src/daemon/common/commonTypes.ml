@@ -469,6 +469,7 @@ type result_info = {
     mutable result_time : int;
     mutable result_modified : bool;
     mutable result_source_network : int;
+    mutable result_completesources : int;
   }
 
 type result = {

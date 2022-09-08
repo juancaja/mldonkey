@@ -140,6 +140,7 @@ let dummy_result = {
     result_modified = true;
     result_time = BasicSocket.last_time ();
     result_source_network = 0;
+    result_completesources = 0;
   }
   
 let result_download rs names force user =

@@ -273,6 +273,7 @@ let int_of_tag_value value =
         String s -> (int_of_string s)
       | Uint64 i -> (Int64.to_int i)
       | Fint64 i -> (Int64.to_int i)
+      | Uint8 i -> i
       | _ -> 0
   with _ -> 0
 

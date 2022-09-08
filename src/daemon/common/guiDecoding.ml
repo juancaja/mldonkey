@@ -454,6 +454,7 @@ let get_result proto s pos =
     result_force = false;
     result_time = time;
     result_source_network = 0;
+    result_completesources = 0;
   }, pos+1
 
 let get_message s pos =

@@ -1696,7 +1696,7 @@ let print_results stime buf o results =
 
   else
 
-    print_table buf [| Align_Left; Align_Right; Align_Right; Align_Right; Align_Right; Align_Left; Align_Left; Align_Left|]
+    print_table buf [| Align_Left; Align_Right; Align_Right; Align_Right; Align_Left; Align_Left; Align_Left|]
       [|
       "[ Num ]";
       "Size";
@@ -1710,6 +1710,24 @@ let print_results stime buf o results =
     (List.rev !files);
   Printf.bprintf buf "%d sources, total available %s\n" !nsources (size_of_int64 !totalsize)
 
+let int_of_tag_value value =
+  try
+    match value with
+        String s -> (int_of_string s)
+      | Uint64 i -> (Int64.to_int i)
+      | Fint64 i -> (Int64.to_int i)
+      | Uint8 i -> i
+      | _ -> 1
+  with _ -> 2
+  
+let completesources_of_tags tags =
+  let value = ref 0 in
+  List.iter (fun t ->
+    match t.tag_name with
+        Field_Completesources -> value := int_of_tag_value t.tag_value
+      | _ -> ()
+  ) tags;
+  !value
 
 let print_search buf s o =
   let user = o.conn_user in
@@ -1720,8 +1738,17 @@ let print_search buf s o =
       let r = IndexedResults.get_result rs in
       results := (rs, r, !avail) :: !results) s.search_results;
   let results = List.sort (fun (_, r1,_) (_, r2,_) ->
-        compare r2.result_size r1.result_size
-    ) !results in
+    r1.result_completesources <- completesources_of_tags r1.result_tags;
+    r2.result_completesources <- completesources_of_tags r2.result_tags;
+    (*
+    Printf.eprintf "%s[driverInteractive] cs1 = %i; cs2 = %i\n%!" 
+      (log_time ())
+      (r1.result_completesources) 
+      (r2.result_completesources);
+    *) 
+    
+    compare (r2.result_completesources) (r1.result_completesources)
+  ) !results in
 
   Printf.bprintf buf "Result of search %d\n" s.search_num;
   Printf.bprintf buf "%d results (%s)\n" s.search_nresults
