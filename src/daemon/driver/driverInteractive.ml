@@ -941,6 +941,15 @@ let print_human_readable file size =
 	  ) 0 chunks))
   else (Printf.sprintf "%8s%s" (Int64.to_string size) ("b") ) )
 
+let print_human_readable_filesize size =
+  (if Int64.to_float size >= 1024. && Int64.to_float size < 1048576. then
+      (Printf.sprintf "%5.1f%s" (Int64.to_float size /. 1024.) ("KB") )
+    else if size >= Int64.of_float 1048576. && Int64.to_float size < 1073741824. then
+      (Printf.sprintf "%5.1f%s" (Int64.to_float size /. 1048576.) ("MG") )
+    else if size >= Int64.of_float 1073741824. then
+      (Printf.sprintf "%5.1f%s" (Int64.to_float size /. 1073741824.) ("GB") )
+    else (Printf.sprintf "%8s%s" (Int64.to_string size) ("B") ) )
+
 let simple_print_file_list finished buf files format =
   let print_table = if format.conn_output = HTML then print_table_html 2
     else print_table_text in
@@ -1581,7 +1590,8 @@ let print_results stime buf o results =
 
                 (if use_html_mods o then
                     "\\<td class=\\\"sr ar\\\"\\>" ^  size_of_int64 r.result_size ^ "\\</td\\>"
-                  else Int64.to_string r.result_size
+                  (*else Int64.to_string r.result_size     <- Filesize in bytes  *)
+                  else (print_human_readable_filesize r.result_size)
                 );
 
                 (if use_html_mods o then
@@ -1746,7 +1756,7 @@ let print_search buf s o =
       (r1.result_completesources) 
       (r2.result_completesources);
     *) 
-    
+
     compare (r2.result_completesources) (r1.result_completesources)
   ) !results in
 
