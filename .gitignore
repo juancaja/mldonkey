@@ -256,6 +256,9 @@ src/utils/xml-light/xml_lexer.ml
 src/utils/xml-light/xml_parser.ml
 src/utils/xml-light/xml_parser.mli
 tools/ocamlpp.ml
+mlnet.bak
+patches/ocaml-4.01.0.tar.gz
 
 # Directories
 config/autom4te.cache/
+patches/local/
